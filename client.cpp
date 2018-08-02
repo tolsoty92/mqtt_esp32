@@ -13,20 +13,15 @@ class mqtt_client
     char* PASSWORD;
     char* MQTT_SERVER;
 
-    int PLATFORM_ID;
-    static String RECEIVED_DATA;
-    static long last_msg;
-    //char* TOPIC;
     
     WiFiClient espClient;
     PubSubClient* client;
 
 
-    mqtt_client(char* ssid, char* password, char* mqtt_server, int platform_id)
+    mqtt_client(char* ssid, char* password, char* mqtt_server)
     {
         SSID = ssid;
         PASSWORD = password;
-        PLATFORM_ID = platform_id;
         client = new PubSubClient(espClient);
         client -> setServer(mqtt_server, 1883);
     }
@@ -85,7 +80,7 @@ int platform_id = 5;
 String RECEIVED_DATA;
 bool MESSAGE_IS_REC = false;
 
-mqtt_client mqtt(ssid, password, mqtt_server, platform_id);
+mqtt_client mqtt(ssid, password, mqtt_server);
 U8X8_SSD1306_128X64_NONAME_SW_I2C u8x8(15,4,16);
 
 
