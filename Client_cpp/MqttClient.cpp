@@ -60,14 +60,7 @@ void mqttClient::pub_msg(char* msg, int platform_id)
     client->publish(topic, theme);
 }
 
-// void callback(char* topic, byte* message, unsigned int length)
-// {   
-//     // 
-//     // for (int i = 0; i < length; i++) {
-//     //     RECEIVED_DATA += (char)message[i];
-//     // } 
-//     // MESSAGE_IS_REC = true;
-// }
+
 
 void mqttClient::set_callback(void (*callback)(char* topic, byte* message, unsigned int length))
 {
