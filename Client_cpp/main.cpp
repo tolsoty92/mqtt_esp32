@@ -38,7 +38,7 @@ void setup()
     u8x8.clear();                              // Clear display
     mqtt.setup_wifi();                         // Connect to WiFi
     mqtt.set_callback(*callback);              // Set event for getting message in subscribed topic
-    mqtt.subscribe(platform_id);               // Subscribe on topic <<esp32/XXX/>>, where XXX is platform id
+    
     mqtt.pub_msg("Connected", platform_id);    // Send message "Connected" to topic <<esp32/feedback/XXX/>>
     u8x8.drawString(1,1,"End of setup");
     delay(2000);
@@ -46,7 +46,8 @@ void setup()
 }
 
 void loop()
-{
+{                                              //if we lose the connection and reconnect then subscriptions will be renewed.
+    mqtt.subscribe(platform_id);               // Subscribe on topic <<esp32/XXX/>>, where XXX is platform id. If cli
     mqtt.init_client_loop();                   // Init clien loop
     char msg[64] = "";                         // Init empty message variable
     RECEIVED_DATA.toCharArray(msg, 64);        // Pull text from RECEIVED_DATA to msg var
