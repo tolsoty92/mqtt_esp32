@@ -25,7 +25,7 @@ if __name__== "__main__":
     client.subscribe(FEEDBACK_TOPIC, qos=MESSAGES_QOS)
     while True:
         client.loop(WORKER_TIME)
-        send_rand_msg(client, PLATFORM_SET, MSG_TOPIC, qos=MESSAGES_QOS)
+        send_rand_msg(client, PLATFORMS_SET, MSG_TOPIC, qos=MESSAGES_QOS)
         sleep(3)
         if not client.connected_flag:
             # if clients more than MAX_WORKERS, they add to pool and wait for reconnect
