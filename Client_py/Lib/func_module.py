@@ -45,3 +45,9 @@ def send_rand_msg(client, platform_lst, msg_topic, qos):
         msg = "Test msg " + str(randint(50, 100))
         topic = msg_topic + str(platform)
         client.publish(topic, msg, qos=qos)
+
+def send_angle(client, platform_lst, msg_topic, qos, angle):
+    for platform in platform_lst:
+        msg = str(angle)
+        topic = msg_topic + str(platform)
+        client.publish(topic, msg, qos=qos)
