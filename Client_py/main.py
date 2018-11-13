@@ -1,11 +1,11 @@
 from time import sleep
 import paho.mqtt.client as mqtt  # import the client1
 from concurrent.futures import ThreadPoolExecutor
-from Client_py.Lib.func_module import  *
+from Lib.func_module import  *
 import cv2.aruco as aruco
 import cv2
 import numpy as np
-from Client_py.Lib.aruco_tools import *
+from Lib.aruco_tools import *
 
 # CV initilization
 stream = cv2.VideoCapture(0)
@@ -70,23 +70,24 @@ if __name__== "__main__":
 
         if np.all(ids != None):
             rvec, tvec, _ = aruco.estimatePoseSingleMarkers(corners, 0.05, mtx, dist)  # Estimate pose of each marker
-            direction_point, cntr = detect_direction(corners[0])
-            CHECKPOINT = is_it_checkpoint(cntr, dst_pt)
-            direction_point = find_direction_point(direction_point, cntr)
-            error_angle = find_angle_error(direction_point, cntr, dst_pt)
-            error_angle = find_angle_direction(direction_point, cntr, dst_pt, error_angle)
-            cv2.line(img, direction_point, direction_point, (150, 0, 255), 1)
-            cv2.line(img, cntr, dst_pt, (30, 255, 15), 1)
-            cv2.line(img, cntr, direction_point, (250, 180, 140), 2)
-            cv2.circle(img, direction_point, 1, (200, 55, 255), 15, cv2.LINE_8)
-            cv2.putText(img, str(error_angle), (25, 25), font, 0.5, (255, 255, 200), 2)
-            strg = ''
+            for id in ids:
+                direction_point, cntr = detect_direction(corners[0])
+                CHECKPOINT = is_it_checkpoint(cntr, dst_pt)
+                direction_point = find_direction_point(direction_point, cntr)
+                abs_error_angle = find_angle_error(direction_point, cntr, dst_pt)
+                error_angle = find_angle_direction(direction_point, cntr, dst_pt, abs_error_angle)
+                cv2.line(img, direction_point, direction_point, (150, 0, 255), 1)
+                cv2.line(img, cntr, dst_pt, (30, 255, 15), 1)
+                cv2.line(img, cntr, direction_point, (250, 180, 140), 2)
+                cv2.circle(img, direction_point, 1, (200, 55, 255), 15, cv2.LINE_8)
+                cv2.putText(img, str(error_angle), (25, 25), font, 0.5, (255, 255, 200), 2)
+                if abs(error_angle) > 10:
+                    send_angle(client, id, MSG_TOPIC, angle=error_angle, qos=MESSAGES_QOS)
+                    error_angle = -1
+                strg = ''
             for i in range(0, ids.size):
                 strg += str(ids[i][0]) + ', '
             cv2.putText(img, "Id: " + strg, (0, 64), font, 1, (0, 255, 0), 1, cv2.LINE_AA)
-            if abs(error_angle) > 10:
-               send_angle(client, PLATFORMS_SET, MSG_TOPIC, angle=error_angle, qos=MESSAGES_QOS)
-               error_angle = -1
         else:
             cv2.putText(img, "No Ids", (0, 64), font, 1, (0, 255, 0), 2, cv2.LINE_AA)
         cv2.imshow('img', img)
